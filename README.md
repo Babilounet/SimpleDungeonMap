@@ -23,14 +23,6 @@ Ragefire Chasm, Wailing Caverns, The Deadmines, Shadowfang Keep, Blackfathom Dee
 ### TBC
 Hellfire Ramparts, The Blood Furnace, The Shattered Halls, The Slave Pens, The Underbog, The Steamvault, Mana-Tombs, Auchenai Crypts, Sethekk Halls, Shadow Labyrinth, The Mechanar, The Botanica, The Arcatraz, Old Hillsbrad Foothills, The Black Morass, Magisters' Terrace
 
-## Requirements
-
-**BLP texture files must be provided separately.** The addon expects tiled dungeon map textures at:
-```
-Interface\Worldmap\{DungeonName}\{DungeonName}{floor}_{tile}.blp
-```
-12 tiles per floor (4x3 grid, 256x256 each). Extract them from game data using CASCExplorer or similar tools.
-
 ## Optional Dependencies
 
 - **Leatrix Maps** - Enables clicking dungeon portal icons on the world map to preview dungeon maps
@@ -52,5 +44,6 @@ Interface\Worldmap\{DungeonName}\{DungeonName}{floor}_{tile}.blp
 ## Installation
 
 1. Extract `SimpleDungeonMap` folder into `Interface\AddOns\`
-2. Place dungeon map BLP textures in `Interface\Worldmap\` (see Requirements)
-3. Reload UI or restart the game
+2. Reload UI or restart the game
+
+Dungeon map textures are loaded directly from the game client data (CASC archives). No manual extraction needed.
