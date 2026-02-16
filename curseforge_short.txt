@@ -1,0 +1,1 @@
+Displays dungeon map overlays on the World Map for all Classic and TBC dungeons. Floor switching, portal click preview (with Leatrix Maps), and Questie quest pin integration.
