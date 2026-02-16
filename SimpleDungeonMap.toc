@@ -1,0 +1,9 @@
+## Interface: 20505
+## Title: SimpleDungeonMap
+## Author: Based on DungeonMaps by Undeadguy, refactored for Anniversary Edition
+## Version: 1.0
+## Notes: Displays dungeon maps overlay on the World Map for Classic & TBC dungeons
+## SavedVariables: SDM_Settings
+
+DungeonData.lua
+SimpleDungeonMap.lua
