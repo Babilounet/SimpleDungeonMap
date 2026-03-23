@@ -4,6 +4,7 @@
 ## Version: 1.0
 ## Notes: Displays dungeon maps overlay on the World Map for Classic & TBC dungeons
 ## SavedVariables: SDM_Settings
+## X-Curse-Project-ID: 1464177
 
 DungeonData.lua
 SimpleDungeonMap.lua

@@ -1,0 +1,5 @@
+package-as: SimpleDungeonMap
+
+ignore:
+  - README.md
+  - .github
