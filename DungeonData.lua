@@ -25,7 +25,7 @@ SDM_DungeonByMapID = {
     [329] = "Stratholme",
     [289] = "Scholomance",
     -- TBC
-    [543] = "HellfireRampart",
+    [543] = "HellfireRamparts",
     [542] = "TheBloodFurnace",
     [540] = "TheShatteredHalls",
     [547] = "TheSlavePens",
@@ -38,8 +38,8 @@ SDM_DungeonByMapID = {
     [554] = "TheMechanar",
     [553] = "TheBotanica",
     [552] = "TheArcatraz",
-    [560] = "OldHillsbradFoothills",
-    [269] = "TheBlackMorass",
+    [560] = "CoTHillsbradFoothills",
+    [269] = "CoTTheBlackMorass",
     [585] = "MagistersTerrace",
 }
 
@@ -244,7 +244,7 @@ SDM_DungeonPortals = {
 
     -- Outland (TBC)
     [1944] = {  -- Hellfire Peninsula: 3 dungeons
-        { x=47.7, y=53.6, name="HellfireRampart", floor=1 },
+        { x=47.7, y=53.6, name="HellfireRamparts", floor=1 },
         { x=47.7, y=52.0, name="TheShatteredHalls", floor=1 },
         { x=46.0, y=51.8, name="TheBloodFurnace", floor=1 },
     },
