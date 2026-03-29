@@ -103,8 +103,8 @@ function SDM_CreateFrames()
     clickFrame:Hide()
     SDM_ClickFrame = clickFrame
 
-    -- Floor switching buttons (max 7 for BlackrockSpire)
-    for i = 1, 7 do
+    -- Floor switching buttons (max 10 for raids like Karazhan/BlackTemple)
+    for i = 1, 10 do
         local btn = CreateFrame("Frame", "SDM_FloorBtn" .. i, container)
         btn:SetSize(30, 20)
         btn:SetPoint("TOPLEFT", container, "TOPLEFT", 2, -2 - (i - 1) * 22)

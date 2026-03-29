@@ -24,6 +24,24 @@ SDM_DungeonByMapID = {
     [429] = "Diremaul",
     [329] = "Stratholme",
     [289] = "Scholomance",
+    -- Vanilla Raids
+    [409] = "MoltenCore",
+    [249] = "OnyxiasLair",
+    [469] = "BlackwingLair",
+    [309] = "ZulGurub",
+    [509] = "RuinsofAhnQiraj",
+    [531] = "AhnQiraj",
+    [533] = "Naxxramas",
+    -- TBC Raids
+    [532] = "Karazhan",
+    [565] = "GruulsLair",
+    [544] = "MagtheridonsLair",
+    [548] = "CoilfangReservoir",
+    [550] = "TempestKeep",
+    [534] = "CoTMountHyjal",
+    [564] = "BlackTemple",
+    [580] = "SunwellPlateau",
+    [568] = "ZulAman",
     -- TBC
     [543] = "HellfireRamparts",
     [542] = "TheBloodFurnace",
@@ -108,8 +126,14 @@ SDM_SubzoneToFloor = {
 
 -- Dungeons with special texture path handling
 SDM_SpecialDungeons = {
-    -- ZulFarrak: no floor prefix in texture name (ZulFarrak1.blp instead of ZulFarrak1_1.blp)
+    -- No floor prefix in texture name (e.g. ZulFarrak1.blp instead of ZulFarrak1_1.blp)
     ["ZulFarrak"] = "no_floor_prefix",
+    ["ZulGurub"] = "no_floor_prefix",
+    ["RuinsofAhnQiraj"] = "no_floor_prefix",
+    ["CoTHillsbradFoothills"] = "no_floor_prefix",
+    ["CoTTheBlackMorass"] = "no_floor_prefix",
+    ["CoTMountHyjal"] = "no_floor_prefix",
+    ["ZulAman"] = "no_floor_prefix",
     -- ScarletMonastery: wing detected by player coordinates, not subzone
     ["ScarletMonastery"] = "coordinate_detection",
 }
@@ -141,12 +165,21 @@ SDM_DungeonFloors = {
     ["TheArcatraz"]      = {1, 2, 3},
     ["TheSteamvault"]    = {1, 2},
     ["MagistersTerrace"] = {1, 2},
+    -- Vanilla Raids
+    ["BlackwingLair"]    = {1, 2, 3, 4},
+    ["AhnQiraj"]         = {1, 2, 3},
+    ["Naxxramas"]        = {1, 2, 3, 4, 5, 6},
+    -- TBC Raids
+    ["Karazhan"]         = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+    ["BlackTemple"]      = {1, 2, 3, 4, 5, 6, 7},
 }
 
 -- Short labels for floor buttons (nil = use floor number)
 SDM_FloorLabels = {
     ["ScarletMonastery"] = { "GY", "Lib", "Arm", "Cath" },
     ["Stratholme"]       = { "Liv", "UD" },
+    -- Vanilla Raids
+    ["Naxxramas"]        = { "Arach", "Plag", "Mil", "Cons", "Frost", "KT" },
 }
 
 -- Tooltip names for floors
@@ -162,6 +195,13 @@ SDM_FloorNames = {
     ["BlackrockSpire"]   = { "Tazz'Alaor", "Rookery", "Hordemar City", "Floor 4", "Floor 5", "Chamber of Battle", "Hall of Blackhand" },
     -- TBC
     ["TheArcatraz"]      = { "Stasis Block", "Restraining Grounds", "Top" },
+    -- Vanilla Raids
+    ["BlackwingLair"]    = { "Razorgore", "Vaelastrasz", "Chromaggus", "Nefarian" },
+    ["AhnQiraj"]         = { "Temple Entrance", "Twin Emperors", "C'Thun" },
+    ["Naxxramas"]        = { "Arachnid Quarter", "Plague Quarter", "Military Quarter", "Construct Quarter", "Frostwyrm Lair", "Kel'Thuzad" },
+    -- TBC Raids
+    ["Karazhan"]         = { "Servant Quarters", "Upper Livery", "The Guest Chambers", "The Opera House", "The Menagerie", "Gamesman's Hall", "Guardian's Library", "Netherspace", "Floor 9", "Floor 10" },
+    ["BlackTemple"]      = { "Karabor Sewers", "Sanctuary of Shadows", "Halls of Anguish", "Gorefiend's Vigil", "Den of Mortal Delights", "Chamber of Command", "Temple Summit" },
 }
 
 -- instanceMapID -> Questie areaID (for reading quest pins from Questie)
@@ -203,6 +243,24 @@ SDM_InstanceToQuestieArea = {
     [560] = 2367,  -- Old Hillsbrad Foothills
     [269] = 2366,  -- The Black Morass
     [585] = 4131,  -- Magisters' Terrace
+    -- Vanilla Raids
+    [409] = 2717,  -- Molten Core
+    [249] = 2159,  -- Onyxia's Lair
+    [469] = 2677,  -- Blackwing Lair
+    [309] = 1977,  -- Zul'Gurub
+    [509] = 3429,  -- Ruins of Ahn'Qiraj
+    [531] = 3428,  -- Temple of Ahn'Qiraj
+    [533] = 3456,  -- Naxxramas
+    -- TBC Raids
+    [532] = 3457,  -- Karazhan
+    [565] = 3923,  -- Gruul's Lair
+    [544] = 3836,  -- Magtheridon's Lair
+    [548] = 3607,  -- Serpentshrine Cavern
+    [550] = 3845,  -- Tempest Keep (The Eye)
+    [534] = 3606,  -- Hyjal Summit
+    [564] = 3959,  -- Black Temple
+    [580] = 4075,  -- Sunwell Plateau
+    [568] = 3805,  -- Zul'Aman
 }
 
 -- World map zone -> dungeon portal positions (coordinates in percent, from Leatrix_Maps)
@@ -213,17 +271,35 @@ SDM_DungeonPortals = {
     [1420] = {{ x=82.6, y=33.8, name="ScarletMonastery", floor=1 }},
     [1421] = {{ x=44.8, y=67.8, name="ShadowfangKeep", floor=1 }},
     [1422] = {{ x=69.7, y=73.2, name="Scholomance", floor=1 }},
-    [1423] = {  -- Eastern Plaguelands: 2 entrances Stratholme
+    [1423] = {  -- Eastern Plaguelands: Stratholme + Naxxramas
         { x=31.3, y=15.7, name="Stratholme", floor=1 },
         { x=47.9, y=23.9, name="Stratholme", floor=2 },
+        { x=39.3, y=25.6, name="Naxxramas", floor=1 },
     },
     [1426] = {{ x=24.3, y=39.8, name="Gnomeregan", floor=1 }},
-    -- [1427] Searing Gorge: Blackrock = Dunraid, skip
-    -- [1428] Burning Steppes: Blackrock = Dunraid, skip
+    [1427] = {  -- Searing Gorge: Blackrock Mountain raids + dungeons
+        { x=34.8, y=85.3, name="MoltenCore", floor=1 },
+        { x=34.8, y=85.3, name="BlackwingLair", floor=1 },
+        { x=34.8, y=85.3, name="BlackrockDepths", floor=1 },
+        { x=34.8, y=85.3, name="BlackrockSpire", floor=7 },
+    },
+    [1428] = {  -- Burning Steppes: Blackrock Mountain raids + dungeons
+        { x=29.4, y=38.3, name="MoltenCore", floor=1 },
+        { x=29.4, y=38.3, name="BlackwingLair", floor=1 },
+        { x=29.4, y=38.3, name="BlackrockDepths", floor=1 },
+        { x=29.4, y=38.3, name="BlackrockSpire", floor=7 },
+    },
     [1435] = {{ x=69.9, y=53.6, name="TheTempleofAtalhakkar", floor=1 }},
     [1436] = {{ x=42.5, y=71.7, name="TheDeadmines", floor=1 }},
     [1453] = {{ x=42.3, y=59.0, name="TheStockade", floor=1 }},
-    [1957] = {{ x=61.2, y=30.9, name="MagistersTerrace", floor=1 }},
+    [1957] = {  -- Isle of Quel'Danas: Magisters' Terrace + Sunwell Plateau
+        { x=61.2, y=30.9, name="MagistersTerrace", floor=1 },
+        { x=44.3, y=45.6, name="SunwellPlateau", floor=1 },
+    },
+    [1434] = {{ x=52.2, y=17.4, name="ZulGurub", floor=1 }},           -- Stranglethorn Vale
+    [1445] = {{ x=52.6, y=76.8, name="OnyxiasLair", floor=1 }},        -- Dustwallow Marsh
+    [1430] = {{ x=46.9, y=74.4, name="Karazhan", floor=1 }},           -- Deadwind Pass
+    [1942] = {{ x=35.8, y=37.1, name="ZulAman", floor=1 }},            -- Ghostlands
 
     -- Kalimdor
     [1413] = {  -- The Barrens: 3 dungeons
@@ -238,15 +314,24 @@ SDM_DungeonPortals = {
         { x=60.3, y=30.2, name="Diremaul", floor=5 },  -- West (Warpwood)
         { x=64.8, y=30.2, name="Diremaul", floor=2 },  -- East (Capital Gardens)
     },
-    [1446] = {{ x=38.7, y=20.0, name="ZulFarrak", floor=1 }},
-    -- [1446] also Caverns of Time = Dunraid, skip
+    [1451] = {  -- Silithus: AQ20 + AQ40
+        { x=36.4, y=93.6, name="RuinsofAhnQiraj", floor=1 },
+        { x=29.1, y=92.4, name="AhnQiraj", floor=1 },
+    },
+    [1446] = {  -- Tanaris: Zul'Farrak + Caverns of Time
+        { x=38.7, y=20.0, name="ZulFarrak", floor=1 },
+        { x=65.4, y=49.3, name="CoTHillsbradFoothills", floor=1 },
+        { x=66.2, y=49.3, name="CoTTheBlackMorass", floor=1 },
+        { x=67.0, y=49.3, name="CoTMountHyjal", floor=1 },
+    },
     [1454] = {{ x=52.6, y=49.0, name="Ragefire", floor=1 }},
 
     -- Outland (TBC)
-    [1944] = {  -- Hellfire Peninsula: 3 dungeons
+    [1944] = {  -- Hellfire Peninsula: 3 dungeons + Magtheridon's Lair
         { x=47.7, y=53.6, name="HellfireRamparts", floor=1 },
         { x=47.7, y=52.0, name="TheShatteredHalls", floor=1 },
         { x=46.0, y=51.8, name="TheBloodFurnace", floor=1 },
+        { x=46.8, y=52.8, name="MagtheridonsLair", floor=1 },
     },
     [1952] = {  -- Terokkar Forest: 4 dungeons
         { x=39.7, y=60.2, name="ManaTombs", floor=1 },
@@ -254,12 +339,20 @@ SDM_DungeonPortals = {
         { x=43.2, y=65.6, name="SethekkHalls", floor=1 },
         { x=39.6, y=71.0, name="ShadowLabyrinth", floor=1 },
     },
-    [1953] = {  -- Netherstorm: 3 dungeons
+    [1953] = {  -- Netherstorm: 3 dungeons + The Eye
         { x=71.7, y=55.0, name="TheBotanica", floor=1 },
         { x=74.4, y=57.7, name="TheArcatraz", floor=1 },
         { x=70.6, y=69.7, name="TheMechanar", floor=1 },
+        { x=73.7, y=63.7, name="TempestKeep", floor=1 },
     },
-    -- [1946] Zangarmarsh: Coilfang = Dunraid, skip
+    [1946] = {  -- Zangarmarsh: Coilfang dungeons + SSC
+        { x=49.5, y=40.2, name="TheSlavePens", floor=1 },
+        { x=50.3, y=40.9, name="TheUnderbog", floor=1 },
+        { x=51.1, y=40.2, name="TheSteamvault", floor=1 },
+        { x=50.3, y=41.7, name="CoilfangReservoir", floor=1 },
+    },
+    [1948] = {{ x=71.0, y=46.4, name="BlackTemple", floor=1 }},        -- Shadowmoon Valley
+    [1949] = {{ x=68.7, y=24.0, name="GruulsLair", floor=1 }},         -- Blade's Edge Mountains
 }
 
 -- Fallback NPC/object positions inside dungeons (from Wowhead)
