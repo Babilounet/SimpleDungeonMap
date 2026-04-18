@@ -10,9 +10,11 @@ Based on [DungeonMaps 0.1c](https://www.curseforge.com/wow/addons/dungeonmaps) b
 
 - **Dungeon map overlay** - Automatically displays the dungeon map when opening the World Map inside a supported dungeon
 - **Floor switching** - Buttons in the top-left corner to switch between floors on multi-floor dungeons. Auto-switches based on subzone
+- **Configurable size and position** - Drag with left-click, zoom with Ctrl+mousewheel, or use the options panel (Escape → Interface → AddOns → SimpleDungeonMap). Useful when you don't use Leatrix Maps for resizing
 - **Portal click preview** - Click on blue dungeon portal icons on the World Map (requires [Leatrix Maps](https://www.curseforge.com/wow/addons/leatrix-maps)) to preview the dungeon map without being inside
 - **Questie integration** - Toggle quest objective pins on the dungeon overlay (requires [Questie](https://www.curseforge.com/wow/addons/questie)). Toggle with the ? button in the top-right corner
 - **Right-click to dismiss** - Right-click anywhere on the overlay to close it and return to the normal map
+- **Localized** - UI translated to English, French, German, and Spanish
 - **Locale-independent** - Uses numeric instance map IDs, works with any client language
 
 ## Supported Dungeons
@@ -33,6 +35,7 @@ Hellfire Ramparts, The Blood Furnace, The Shattered Halls, The Slave Pens, The U
 | Command | Description |
 |---------|-------------|
 | `/sdm` | Show current dungeon info |
+| `/sdm options` | Open the options panel |
 | `/sdm questpins` | Toggle quest pins on/off |
 | `/sdm debug` | Show debug info |
 | `/sdm test` | Show red test overlay |

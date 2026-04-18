@@ -48,6 +48,64 @@ local function GetMapCanvas()
     return WorldMapFrame
 end
 
+-- Localization: English keys, per-locale overrides, fallback returns the key itself
+local L = setmetatable({}, { __index = function(_, k) return k end })
+local locale = GetLocale()
+if locale == "frFR" then
+    L["Dungeon overlay size and position."] = "Taille et position de la carte de donjon."
+    L["Map size"] = "Taille de la carte"
+    L["Offset X"] = "Décalage X"
+    L["Offset Y"] = "Décalage Y"
+    L["Quest pins (Questie, beta)"] = "Marqueurs de quête (Questie, bêta)"
+    L["Tip: in the dungeon, left-click + drag to move, Ctrl+wheel to zoom."] = "Astuce : dans le donjon, clic gauche + glisser pour déplacer, Ctrl+molette pour zoomer."
+    L["Reset"] = "Réinitialiser"
+elseif locale == "deDE" then
+    L["Dungeon overlay size and position."] = "Größe und Position der Dungeonkarte."
+    L["Map size"] = "Kartengröße"
+    L["Offset X"] = "Versatz X"
+    L["Offset Y"] = "Versatz Y"
+    L["Quest pins (Questie, beta)"] = "Questmarker (Questie, Beta)"
+    L["Tip: in the dungeon, left-click + drag to move, Ctrl+wheel to zoom."] = "Tipp: im Dungeon, linke Maustaste + ziehen zum Verschieben, Strg+Mausrad zum Zoomen."
+    L["Reset"] = "Zurücksetzen"
+elseif locale == "esES" or locale == "esMX" then
+    L["Dungeon overlay size and position."] = "Tamaño y posición del mapa de mazmorra."
+    L["Map size"] = "Tamaño del mapa"
+    L["Offset X"] = "Desplazamiento X"
+    L["Offset Y"] = "Desplazamiento Y"
+    L["Quest pins (Questie, beta)"] = "Marcas de misión (Questie, beta)"
+    L["Tip: in the dungeon, left-click + drag to move, Ctrl+wheel to zoom."] = "Consejo: en la mazmorra, clic izquierdo + arrastrar para mover, Ctrl+rueda para ampliar."
+    L["Reset"] = "Restablecer"
+end
+
+-- Layout bounds for user-configurable overlay
+local SDM_SCALE_MIN, SDM_SCALE_MAX = 0.3, 1.5
+local SDM_OFFSET_MIN, SDM_OFFSET_MAX = -600, 600
+
+local function SDM_ClampScale(s)
+    if s < SDM_SCALE_MIN then return SDM_SCALE_MIN end
+    if s > SDM_SCALE_MAX then return SDM_SCALE_MAX end
+    return s
+end
+
+local function SDM_ClampOffset(v)
+    if v < SDM_OFFSET_MIN then return SDM_OFFSET_MIN end
+    if v > SDM_OFFSET_MAX then return SDM_OFFSET_MAX end
+    return v
+end
+
+-- Apply user-configured scale and position to the overlay container
+function SDM_ApplyContainerLayout()
+    if not SDM_Container then return end
+    if not SDM_Settings then SDM_Settings = {} end
+    local s = SDM_ClampScale(SDM_Settings.overlayScale or 1.0)
+    local ox = SDM_ClampOffset(SDM_Settings.offsetX or 0)
+    local oy = SDM_ClampOffset(SDM_Settings.offsetY or 0)
+    SDM_Container:SetScale(s)
+    SDM_Container:ClearAllPoints()
+    local canvas = GetMapCanvas()
+    SDM_Container:SetPoint("TOPLEFT", canvas, "TOPLEFT", ox, oy)
+end
+
 -- Generate texture path for a dungeon tile
 function SDM_GetTexturePath(dungeonName, floor, tileIndex)
     if SDM_SpecialDungeons[dungeonName] == "no_floor_prefix" then
@@ -90,16 +148,57 @@ function SDM_CreateFrames()
         SDM_Textures[i] = tex
     end
 
-    -- Click frame: intercepts right-click BEFORE it reaches the map
+    -- Click frame: intercepts right-click BEFORE it reaches the map,
+    -- supports left-click drag to move overlay, and Ctrl+wheel to scale.
     local clickFrame = CreateFrame("Frame", "SDM_ClickFrame", container)
     clickFrame:SetAllPoints(container)
     clickFrame:SetFrameLevel(baseLevel + 110)
     clickFrame:EnableMouse(true)
+    clickFrame:EnableMouseWheel(true)
+
     clickFrame:SetScript("OnMouseDown", function(self, button)
         if button == "RightButton" then
             SDM_HideFrames()
+        elseif button == "LeftButton" then
+            if not SDM_Settings then SDM_Settings = {} end
+            local canvas = GetMapCanvas()
+            local sc = canvas:GetEffectiveScale()
+            local cx, cy = GetCursorPosition()
+            self.dragStartX = cx / sc
+            self.dragStartY = cy / sc
+            self.origOffsetX = SDM_Settings.offsetX or 0
+            self.origOffsetY = SDM_Settings.offsetY or 0
+            self.isDragging = true
+            self:SetScript("OnUpdate", function(s)
+                local nx, ny = GetCursorPosition()
+                local scNow = canvas:GetEffectiveScale()
+                local dx = (nx / scNow) - s.dragStartX
+                local dy = (ny / scNow) - s.dragStartY
+                SDM_Settings.offsetX = SDM_ClampOffset(s.origOffsetX + dx)
+                SDM_Settings.offsetY = SDM_ClampOffset(s.origOffsetY + dy)
+                SDM_ApplyContainerLayout()
+                if SDM_RefreshOptionsPanel then SDM_RefreshOptionsPanel() end
+            end)
         end
     end)
+
+    clickFrame:SetScript("OnMouseUp", function(self, button)
+        if button == "LeftButton" and self.isDragging then
+            self.isDragging = false
+            self:SetScript("OnUpdate", nil)
+        end
+    end)
+
+    clickFrame:SetScript("OnMouseWheel", function(self, delta)
+        if not IsControlKeyDown() then return end
+        if not SDM_Settings then SDM_Settings = {} end
+        local cur = SDM_Settings.overlayScale or 1.0
+        local step = (delta > 0) and 0.05 or -0.05
+        SDM_Settings.overlayScale = SDM_ClampScale(cur + step)
+        SDM_ApplyContainerLayout()
+        if SDM_RefreshOptionsPanel then SDM_RefreshOptionsPanel() end
+    end)
+
     clickFrame:Hide()
     SDM_ClickFrame = clickFrame
 
@@ -202,6 +301,7 @@ function SDM_CreateFrames()
     SDM_QuestPinToggle = qpBtn
 
     SDM_Initialized = true
+    SDM_ApplyContainerLayout()
 end
 
 -- Set textures for a given dungeon and floor
@@ -482,6 +582,8 @@ end
 function SDM_ShowFrames()
     if not SDM_Initialized then return end
 
+    SDM_ApplyContainerLayout()
+
     for i = 1, 12 do
         SDM_Frames[i]:Show()
     end
@@ -519,6 +621,154 @@ function SDM_HideFrames()
         SDM_CurrentDungeon = nil
         SDM_PreviewMode = false
     end
+end
+
+-- ===== Options panel =====
+
+SDM_OptionsPanel = nil
+
+function SDM_RefreshOptionsPanel()
+    local p = SDM_OptionsPanel
+    if not p then return end
+    if not SDM_Settings then SDM_Settings = {} end
+    p.suppressChange = true
+    p.scaleSlider:SetValue(SDM_ClampScale(SDM_Settings.overlayScale or 1.0))
+    p.offsetXSlider:SetValue(SDM_ClampOffset(SDM_Settings.offsetX or 0))
+    p.offsetYSlider:SetValue(SDM_ClampOffset(SDM_Settings.offsetY or 0))
+    p.scaleSlider.valueText:SetText(string.format("%.2f", SDM_Settings.overlayScale or 1.0))
+    p.offsetXSlider.valueText:SetText(tostring(math.floor((SDM_Settings.offsetX or 0) + 0.5)))
+    p.offsetYSlider.valueText:SetText(tostring(math.floor((SDM_Settings.offsetY or 0) + 0.5)))
+    p.questPinsCheck:SetChecked(SDM_Settings.questPins and true or false)
+    p.suppressChange = false
+end
+
+local function SDM_MakeSlider(parent, name, labelText, lo, hi, step)
+    local s = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
+    s:SetWidth(260)
+    s:SetHeight(16)
+    s:SetMinMaxValues(lo, hi)
+    s:SetValueStep(step)
+    if s.SetObeyStepOnDrag then s:SetObeyStepOnDrag(true) end
+    _G[name .. "Low"]:SetText(tostring(lo))
+    _G[name .. "High"]:SetText(tostring(hi))
+    _G[name .. "Text"]:SetText(labelText)
+    s.valueText = s:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    s.valueText:SetPoint("TOP", s, "BOTTOM", 0, -2)
+    return s
+end
+
+function SDM_CreateOptionsPanel()
+    if SDM_OptionsPanel then return SDM_OptionsPanel end
+
+    local f = CreateFrame("Frame", "SDM_OptionsPanel", UIParent)
+    f.name = "SimpleDungeonMap"
+
+    local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    title:SetPoint("TOPLEFT", 16, -16)
+    title:SetText("SimpleDungeonMap")
+
+    local subtitle = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    subtitle:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
+    subtitle:SetPoint("RIGHT", f, "RIGHT", -16, 0)
+    subtitle:SetJustifyH("LEFT")
+    subtitle:SetText(L["Dungeon overlay size and position."])
+
+    f.scaleSlider = SDM_MakeSlider(f, "SDM_ScaleSlider", L["Map size"], SDM_SCALE_MIN, SDM_SCALE_MAX, 0.05)
+    f.scaleSlider:SetPoint("TOPLEFT", 24, -80)
+    f.scaleSlider:SetScript("OnValueChanged", function(self, val)
+        if f.suppressChange then return end
+        val = math.floor(val * 20 + 0.5) / 20
+        SDM_Settings.overlayScale = SDM_ClampScale(val)
+        self.valueText:SetText(string.format("%.2f", SDM_Settings.overlayScale))
+        SDM_ApplyContainerLayout()
+    end)
+
+    f.offsetXSlider = SDM_MakeSlider(f, "SDM_OffsetXSlider", L["Offset X"], SDM_OFFSET_MIN, SDM_OFFSET_MAX, 5)
+    f.offsetXSlider:SetPoint("TOPLEFT", 24, -140)
+    f.offsetXSlider:SetScript("OnValueChanged", function(self, val)
+        if f.suppressChange then return end
+        val = math.floor(val / 5 + 0.5) * 5
+        SDM_Settings.offsetX = SDM_ClampOffset(val)
+        self.valueText:SetText(tostring(SDM_Settings.offsetX))
+        SDM_ApplyContainerLayout()
+    end)
+
+    f.offsetYSlider = SDM_MakeSlider(f, "SDM_OffsetYSlider", L["Offset Y"], SDM_OFFSET_MIN, SDM_OFFSET_MAX, 5)
+    f.offsetYSlider:SetPoint("TOPLEFT", 24, -200)
+    f.offsetYSlider:SetScript("OnValueChanged", function(self, val)
+        if f.suppressChange then return end
+        val = math.floor(val / 5 + 0.5) * 5
+        SDM_Settings.offsetY = SDM_ClampOffset(val)
+        self.valueText:SetText(tostring(SDM_Settings.offsetY))
+        SDM_ApplyContainerLayout()
+    end)
+
+    local cb = CreateFrame("CheckButton", "SDM_QuestPinsCheck", f, "UICheckButtonTemplate")
+    cb:SetPoint("TOPLEFT", 20, -240)
+    _G[cb:GetName() .. "Text"]:SetText(L["Quest pins (Questie, beta)"])
+    cb:SetScript("OnClick", function(self)
+        if f.suppressChange then return end
+        SDM_Settings.questPins = self:GetChecked() and true or false
+        if SDM_UpdateQuestPinToggle then SDM_UpdateQuestPinToggle() end
+        if SDM_Visible and SDM_ShowFrames then SDM_ShowFrames() end
+    end)
+    f.questPinsCheck = cb
+
+    local hint = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    hint:SetPoint("TOPLEFT", 20, -282)
+    hint:SetPoint("RIGHT", f, "RIGHT", -20, 0)
+    hint:SetJustifyH("LEFT")
+    hint:SetText(L["Tip: in the dungeon, left-click + drag to move, Ctrl+wheel to zoom."])
+
+    local reset = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    reset:SetSize(140, 24)
+    reset:SetPoint("TOPLEFT", 20, -320)
+    reset:SetText(L["Reset"])
+    reset:SetScript("OnClick", function()
+        SDM_Settings.overlayScale = 1.0
+        SDM_Settings.offsetX = 0
+        SDM_Settings.offsetY = 0
+        SDM_ApplyContainerLayout()
+        SDM_RefreshOptionsPanel()
+    end)
+
+    -- Blizzard calls this when the panel becomes visible in Interface Options
+    f.refresh = function() SDM_RefreshOptionsPanel() end
+    f.okay = function() end
+    f.cancel = function() end
+    f.default = function()
+        SDM_Settings.overlayScale = 1.0
+        SDM_Settings.offsetX = 0
+        SDM_Settings.offsetY = 0
+        SDM_ApplyContainerLayout()
+        SDM_RefreshOptionsPanel()
+    end
+
+    if InterfaceOptions_AddCategory then
+        InterfaceOptions_AddCategory(f)
+    elseif Settings and Settings.RegisterCanvasLayoutCategory then
+        local category = Settings.RegisterCanvasLayoutCategory(f, f.name)
+        category.ID = f.name
+        Settings.RegisterAddOnCategory(category)
+        f.settingsCategoryID = category.ID
+    end
+
+    SDM_OptionsPanel = f
+    return f
+end
+
+function SDM_ShowOptions()
+    local f = SDM_OptionsPanel or SDM_CreateOptionsPanel()
+    if Settings and Settings.OpenToCategory and f.settingsCategoryID then
+        Settings.OpenToCategory(f.settingsCategoryID)
+    elseif InterfaceOptionsFrame_OpenToCategory then
+        -- Blizzard bug: call twice to ensure correct panel is selected
+        InterfaceOptionsFrame_OpenToCategory(f)
+        InterfaceOptionsFrame_OpenToCategory(f)
+    else
+        f:Show()
+    end
+    SDM_RefreshOptionsPanel()
 end
 
 -- Detect Scarlet Monastery wing by player coordinates
@@ -623,6 +873,10 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
     if event == "ADDON_LOADED" and arg1 == "SimpleDungeonMap" then
         if not SDM_Settings then SDM_Settings = {} end
         if SDM_Settings.questPins == nil then SDM_Settings.questPins = false end
+        if SDM_Settings.overlayScale == nil then SDM_Settings.overlayScale = 1.0 end
+        if SDM_Settings.offsetX == nil then SDM_Settings.offsetX = 0 end
+        if SDM_Settings.offsetY == nil then SDM_Settings.offsetY = 0 end
+        SDM_CreateOptionsPanel()
     elseif event == "PLAYER_ENTERING_WORLD" then
         SDM_OnEnterWorld()
     elseif event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED" then
@@ -695,7 +949,9 @@ end
 -- Slash command: /sdm [debug|test|probe|reset]
 SLASH_SDM1 = "/sdm"
 SlashCmdList["SDM"] = function(msg)
-    if msg == "questpins" then
+    if msg == "options" or msg == "config" or msg == "opt" then
+        SDM_ShowOptions()
+    elseif msg == "questpins" then
         if not SDM_Settings then SDM_Settings = {} end
         SDM_Settings.questPins = not SDM_Settings.questPins
         if SDM_Settings.questPins then
@@ -970,4 +1226,4 @@ SlashCmdList["SDM"] = function(msg)
     end
 end
 
-print("|cff00ff00SimpleDungeonMap|r loaded. /sdm debug | /sdm questpins")
+print("|cff00ff00SimpleDungeonMap|r loaded. /sdm options | /sdm questpins | /sdm debug")
