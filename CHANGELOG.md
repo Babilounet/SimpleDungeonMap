@@ -1,5 +1,31 @@
 # Changelog
 
+## v1.3.3
+
+### Added
+- Calibrated boss positions baked in for the Vanilla dungeons (Shadowfang Keep, The Stockade, Wailing Caverns, Razorfen Kraul/Downs, Blackfathom Deeps, Uldaman, Gnomeregan, Temple of Atal'Hakkar, Scarlet Monastery, Zul'Farrak, Maraudon, Stratholme, Dire Maul, Zul'Gurub, Molten Core, …) — pins now sit on the right spot natively, no in-game calibration needed
+- 264 boss positions placed across 38 instances; 12 non-relevant skull markers removed
+
+### Changed
+- `SDM_DungeonStairs` refreshed from the latest calibration (13 instances, 69 floor passages)
+
+## v1.3.2
+
+### Fixed
+- Corrected Karazhan and Hellfire Ramparts boss positions
+
+## v1.3.1
+
+### Changed
+- Baked calibrated floor-passage stairs into `SDM_DungeonStairs`
+
+## v1.3.0
+
+### Added
+- AtlasLoot boss loot pins on dungeon maps (click a skull to open the boss loot page)
+- Floor-passage stair markers with click-to-switch-floor navigation
+- In-game calibration mode (`/sdm calib`) to drag pins into place, with `/sdm calib dump` / `/sdm calib reset`
+
 ## v1.2.0
 
 ### Added
