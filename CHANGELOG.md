@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.3.4
+
+### Added
+- Addon icon shown in the Escape > AddOns list (`## IconTexture`, bundled `icon.blp`) instead of the default question mark
+
 ## v1.3.3
 
 ### Added
