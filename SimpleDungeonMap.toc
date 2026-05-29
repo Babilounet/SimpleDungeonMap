@@ -1,5 +1,6 @@
 ## Interface: 20505
 ## Title: SimpleDungeonMap
+## IconTexture: Interface\AddOns\SimpleDungeonMap\icon.blp
 ## Author: Based on DungeonMaps by Undeadguy, refactored for Anniversary Edition
 ## Version: 1.3.3
 ## Notes: Displays dungeon maps overlay on the World Map for Classic & TBC dungeons
