@@ -62,7 +62,7 @@ if locale == "frFR" then
     L["Quest pins (Questie, beta)"] = "Marqueurs de quête (Questie, bêta)"
     L["Boss pins (AtlasLoot)"] = "Marqueurs de boss (AtlasLoot)"
     L["Stair pins (floor passages)"] = "Marqueurs d'escalier (passages)"
-    L["Tip: in the dungeon, left-click + drag to move, Ctrl+wheel to zoom."] = "Astuce : dans le donjon, clic gauche + glisser pour déplacer, Ctrl+molette pour zoomer."
+    L["Tip: in the dungeon, Ctrl+left-click + drag to move, Ctrl+wheel to zoom."] = "Astuce : dans le donjon, Ctrl+clic gauche + glisser pour déplacer, Ctrl+molette pour zoomer."
     L["Reset"] = "Réinitialiser"
 elseif locale == "deDE" then
     L["Dungeon overlay size and position."] = "Größe und Position der Dungeonkarte."
@@ -72,7 +72,7 @@ elseif locale == "deDE" then
     L["Quest pins (Questie, beta)"] = "Questmarker (Questie, Beta)"
     L["Boss pins (AtlasLoot)"] = "Bossmarker (AtlasLoot)"
     L["Stair pins (floor passages)"] = "Treppenmarker (Übergänge)"
-    L["Tip: in the dungeon, left-click + drag to move, Ctrl+wheel to zoom."] = "Tipp: im Dungeon, linke Maustaste + ziehen zum Verschieben, Strg+Mausrad zum Zoomen."
+    L["Tip: in the dungeon, Ctrl+left-click + drag to move, Ctrl+wheel to zoom."] = "Tipp: im Dungeon, Strg+linke Maustaste + ziehen zum Verschieben, Strg+Mausrad zum Zoomen."
     L["Reset"] = "Zurücksetzen"
 elseif locale == "esES" or locale == "esMX" then
     L["Dungeon overlay size and position."] = "Tamaño y posición del mapa de mazmorra."
@@ -82,7 +82,7 @@ elseif locale == "esES" or locale == "esMX" then
     L["Quest pins (Questie, beta)"] = "Marcas de misión (Questie, beta)"
     L["Boss pins (AtlasLoot)"] = "Marcas de jefe (AtlasLoot)"
     L["Stair pins (floor passages)"] = "Marcas de escalera (pasajes)"
-    L["Tip: in the dungeon, left-click + drag to move, Ctrl+wheel to zoom."] = "Consejo: en la mazmorra, clic izquierdo + arrastrar para mover, Ctrl+rueda para ampliar."
+    L["Tip: in the dungeon, Ctrl+left-click + drag to move, Ctrl+wheel to zoom."] = "Consejo: en la mazmorra, Ctrl+clic izquierdo + arrastrar para mover, Ctrl+rueda para ampliar."
     L["Reset"] = "Restablecer"
 end
 
@@ -158,7 +158,7 @@ function SDM_CreateFrames()
     end
 
     -- Click frame: intercepts right-click BEFORE it reaches the map,
-    -- supports left-click drag to move overlay, and Ctrl+wheel to scale.
+    -- supports Ctrl+left-click drag to move overlay, and Ctrl+wheel to scale.
     local clickFrame = CreateFrame("Frame", "SDM_ClickFrame", container)
     clickFrame:SetAllPoints(container)
     clickFrame:SetFrameLevel(baseLevel + 110)
@@ -181,6 +181,9 @@ function SDM_CreateFrames()
                 print(string.format("|cff00ff00SDM calib|r: x=%.1f, y=%.1f", x, y))
                 return
             end
+            -- Require Ctrl held to drag the overlay, so a plain left-click
+            -- drag still pans the underlying world map.
+            if not IsControlKeyDown() then return end
             local canvas = GetMapCanvas()
             local sc = canvas:GetEffectiveScale()
             local cx, cy = GetCursorPosition()
@@ -1401,7 +1404,7 @@ function SDM_CreateOptionsPanel()
     hint:SetPoint("TOPLEFT", 20, -330)
     hint:SetPoint("RIGHT", f, "RIGHT", -20, 0)
     hint:SetJustifyH("LEFT")
-    hint:SetText(L["Tip: in the dungeon, left-click + drag to move, Ctrl+wheel to zoom."])
+    hint:SetText(L["Tip: in the dungeon, Ctrl+left-click + drag to move, Ctrl+wheel to zoom."])
 
     local reset = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     reset:SetSize(140, 24)

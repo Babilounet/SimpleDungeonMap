@@ -32,7 +32,7 @@ Toggle with the **arrow button** in the top-right corner, the options panel, or 
 
 | Method        | How                                                            |
 | ------------- | -------------------------------------------------------------- |
-| Drag          | Left-click + drag on the overlay                               |
+| Drag          | Ctrl + left-click + drag on the overlay                        |
 | Zoom          | Ctrl + mousewheel on the overlay                               |
 | Options panel | Escape → Interface → AddOns → SimpleDungeonMap, or `/sdm options` |
 

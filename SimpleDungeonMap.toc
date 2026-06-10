@@ -2,7 +2,7 @@
 ## Title: SimpleDungeonMap
 ## IconTexture: Interface\AddOns\SimpleDungeonMap\icon.blp
 ## Author: Based on DungeonMaps by Undeadguy, refactored for Anniversary Edition
-## Version: 1.3.4
+## Version: 1.3.5
 ## Notes: Displays dungeon maps overlay on the World Map for Classic & TBC dungeons
 ## SavedVariables: SDM_Settings
 ## OptionalDeps: AtlasLootClassic, Questie, Leatrix_Maps

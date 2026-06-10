@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.3.5
+
+### Fixed
+- Overlay drag now requires **Ctrl + left-click** again — a plain left-click drag no longer moves the overlay (it lets the underlying world map pan as expected). Help text and README updated to match.
+
 ## v1.3.4
 
 ### Added
